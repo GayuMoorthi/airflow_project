@@ -1,0 +1,18 @@
+[2026-04-29T09:52:48.303+0300] {local_task_job_runner.py:120} INFO - ::group::Pre task execution logs
+[2026-04-29T09:52:48.560+0300] {taskinstance.py:2076} INFO - Dependencies all met for dep_context=non-requeueable deps ti=<TaskInstance: email_alert.success_task scheduled__2026-04-28T00:00:00+00:00 [queued]>
+[2026-04-29T09:52:48.594+0300] {taskinstance.py:2076} INFO - Dependencies all met for dep_context=requeueable deps ti=<TaskInstance: email_alert.success_task scheduled__2026-04-28T00:00:00+00:00 [queued]>
+[2026-04-29T09:52:48.596+0300] {taskinstance.py:2306} INFO - Starting attempt 1 of 2
+[2026-04-29T09:52:48.659+0300] {taskinstance.py:2330} INFO - Executing <Task(PythonOperator): success_task> on 2026-04-28 00:00:00+00:00
+[2026-04-29T09:52:48.666+0300] {standard_task_runner.py:64} INFO - Started process 39633 to run task
+[2026-04-29T09:52:48.670+0300] {standard_task_runner.py:90} INFO - Running: ['airflow', 'tasks', 'run', 'email_alert', 'success_task', 'scheduled__2026-04-28T00:00:00+00:00', '--job-id', '2', '--raw', '--subdir', 'DAGS_FOLDER/email.py', '--cfg-path', '/tmp/tmpya_owkcg']
+[2026-04-29T09:52:48.674+0300] {standard_task_runner.py:91} INFO - Job 2: Subtask success_task
+[2026-04-29T09:52:48.831+0300] {task_command.py:426} INFO - Running <TaskInstance: email_alert.success_task scheduled__2026-04-28T00:00:00+00:00 [running]> on host GayuBala.localdomain
+[2026-04-29T09:52:49.015+0300] {taskinstance.py:2648} INFO - Exporting env vars: AIRFLOW_CTX_DAG_EMAIL='gayumoorthi77@gmail.com' AIRFLOW_CTX_DAG_OWNER='Gayathri' AIRFLOW_CTX_DAG_ID='email_alert' AIRFLOW_CTX_TASK_ID='success_task' AIRFLOW_CTX_EXECUTION_DATE='2026-04-28T00:00:00+00:00' AIRFLOW_CTX_TRY_NUMBER='1' AIRFLOW_CTX_DAG_RUN_ID='scheduled__2026-04-28T00:00:00+00:00'
+[2026-04-29T09:52:49.019+0300] {taskinstance.py:430} INFO - ::endgroup::
+[2026-04-29T09:52:49.021+0300] {logging_mixin.py:188} INFO - Successfully passed
+[2026-04-29T09:52:49.023+0300] {python.py:237} INFO - Done. Returned value was: None
+[2026-04-29T09:52:49.024+0300] {taskinstance.py:441} INFO - ::group::Post task execution logs
+[2026-04-29T09:52:49.040+0300] {taskinstance.py:1206} INFO - Marking task as SUCCESS. dag_id=email_alert, task_id=success_task, run_id=scheduled__2026-04-28T00:00:00+00:00, execution_date=20260428T000000, start_date=20260429T065248, end_date=20260429T065249
+[2026-04-29T09:52:49.089+0300] {local_task_job_runner.py:243} INFO - Task exited with return code 0
+[2026-04-29T09:52:49.128+0300] {taskinstance.py:3503} INFO - 1 downstream tasks scheduled from follow-on schedule check
+[2026-04-29T09:52:49.141+0300] {local_task_job_runner.py:222} INFO - ::endgroup::
