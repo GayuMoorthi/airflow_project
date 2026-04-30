@@ -1,0 +1,19 @@
+Created a single Python reference file that puts the answers and examples in one place, including secure Airflow/Cloud Composer patterns and useful gcloud / CI/CD command lines. It follows Google’s recommended approach of using Secret Manager as the Airflow secrets backend, where Composer checks Secret Manager first for variables and connections.
+
+What the file covers
+The file includes examples for securely handling database credentials and API keys in Cloud Composer by using Secret Manager instead of hard-coding secrets in DAGs, and it shows both the preferred conn_id pattern and a direct runtime secret fetch pattern for custom tokens. Google documents that Secret Manager can be configured as the Airflow secrets backend, with secrets named using prefixes like airflow-connections-<conn_id> and airflow-variables-<variable_name>.
+
+It also includes guidance for multi-team shared Composer usage: least-privilege IAM, using a user-managed environment service account, team ownership conventions, and repo-level controls like path isolation and protected shared libraries. Google notes that DAGs run on behalf of the environment service account and strongly recommends a user-managed service account with only the permissions required for the environment and DAG operations.
+
+IAM and team isolation
+For shared Composer, the most important control is to restrict who can modify DAGs and environment settings, because users who can change DAG files or run certain update/CLI actions can effectively run code with the environment service account’s permissions. Google explicitly warns that access to the environment bucket, environment updates, and Airflow CLI execution must be limited to trusted users.
+
+The file therefore models practical ownership standards such as team_a__dag_name, explicit owner, per-team folders, and protected shared_lib code, while also noting that true isolation is often better achieved with separate Composer environments for team or criticality boundaries. Cloud Composer uses IAM for environment access, and Airflow UI access control can further restrict UI and DAG permissions beyond basic environment access.
+
+Variables, connections, and CI/CD
+For production configuration, the file uses names in code and values in Secret Manager, which matches Google’s documented pattern: keep conn_id and variable keys in DAG code, and store the actual values in Secret Manager using the configured prefixes. Google also notes that most hooks should retrieve connections automatically from the secret backend at execution time, and that Jinja-templated variable usage is preferable when possible.
+
+For deployment, the file includes a CI/CD design with pull requests, linting, DAG import tests, unit tests, code review, lower-environment deployment, smoke tests, and only then production promotion. Google’s Composer CI/CD guidance describes a flow where DAG changes are tested, synchronized from GitHub, and deployed through controlled stages rather than being pushed directly to production.
+
+Commands and next use
+The file also contains command examples for enabling Secret Manager, granting roles/secretmanager.secretAccessor, configuring Composer’s Airflow secret backend, creating secret-backed Airflow connections and variables, and deploying DAGs with gsutil rsync. Google documents that the service account accessing secrets must have secretmanager.versions.access, commonly through the Secret Manager Secret Accessor role, and that Composer can be configured with CloudSecretManagerBackend plus backend_kwargs such as project_id, connections_prefix, and variables_prefix.
