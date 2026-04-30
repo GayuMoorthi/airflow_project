@@ -1,0 +1,17 @@
+Created a single Python file that groups all the requested Cloud Composer/Airflow patterns into one place, with inline comments and command examples so it’s easier to study and explain in interviews. The examples use task-level retries, failure callbacks for reduced alert noise, task-specific dependencies, cross-project impersonation, incremental BigQuery loading with MERGE, and Dataflow template orchestration patterns aligned with Airflow and Cloud Composer capabilities.
+
+What’s inside
+The file includes eight DAG examples covering: BigQuery quota retry with alerting only after retries are exhausted, retrying only failed tasks instead of the entire DAG, resilient flaky API handling, incremental GCS-to-BigQuery loading with deduplication, upstream-task-based downstream triggering, cross-project secure orchestration, and Dataflow template execution that waits for completion. Airflow supports task-level retry settings such as retries, retry_delay, retry_exponential_backoff, and failure callbacks, while Google provider operators support Dataflow waiting behavior and impersonation patterns.
+
+Key design choices
+For “notify only after multiple consecutive failures,” the example uses on_failure_callback with email_on_retry=False, so transient retry attempts do not spam the team and the alert is sent only when the task reaches a final failed state after retry exhaustion. This matches Airflow’s callback and retry model, where retry-related callbacks and final failure handling are task-instance behaviors rather than whole-DAG reruns.
+
+For “retry only failed tasks,” the code relies on default Airflow behavior: retries apply to the failed task instance, and other successful tasks are not re-executed unless explicitly cleared or redesigned to do so. For the Dataflow section, the example uses DataflowTemplatedJobStartOperator with wait_until_finished=True, and the operator documentation notes that this causes Airflow to wait for batch completion before continuing, with deferrable=True available to reduce worker usage during polling.
+
+Composer-specific patterns
+For downstream dependencies, the file shows both TriggerDagRunOperator and ExternalTaskSensor for same-environment orchestration, and Google documents additional remote-environment options through CloudComposerRunAirflowCLICommandOperator and CloudComposerDAGRunSensor when DAGs span Composer environments or projects. Google’s documentation also specifies that cross-project triggering requires IAM on the target project, including Composer worker access and the ability to execute Airflow commands.
+
+For secure multi-project workflows, the example uses impersonation_chain so Cloud Composer can read in one project, transform in another, and write in a third without long-lived keys. The Google provider documentation for Dataflow and related operators supports impersonation chains for short-lived credentials, and Composer’s cross-environment guidance emphasizes IAM-based access between source and target projects.
+
+Commands included
+The file also includes practical command snippets such as airflow dags test, airflow tasks test, airflow tasks clear, and gsutil cp to help you understand local testing, task-level reruns, and DAG deployment flow in Composer. Those commands are there as learning aids and operational examples, not as required runtime code.
