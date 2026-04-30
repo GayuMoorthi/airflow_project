@@ -1,0 +1,13 @@
+Created a single Python file that puts all the requested Airflow / Cloud Composer patterns in one place, including DAG code and command-line examples for GCS events, Pub/Sub routing, batching small files, SLA alerting, BigQuery data-quality checks, heavy-compute orchestration, and real-time architecture guidance. The code uses Google Cloud Airflow operators such as GCSObjectExistenceSensor, PubSubPullOperator, BigQueryInsertJobOperator, GCSToBigQueryOperator, and DataflowTemplatedJobStartOperator, which are documented for Composer and the Google provider packages.
+
+What’s inside
+The file includes multiple interview-style DAG examples in one module: a GCS file-arrival DAG, a Pub/Sub router DAG that branches to BigQuery or Dataflow based on message content, a batched small-files DAG using chunking and dynamic mapping, and a critical DAG with SLA callbacks plus BigQuery null/duplicate/freshness checks. It also includes notes showing why the preferred event-driven GCS pattern is usually GCS notifications to Pub/Sub and then an external trigger into Airflow, instead of relying only on constant polling sensors.
+
+Design choices
+For the “run only when a new file arrives” use case, the file shows a sensor-based Airflow implementation because it is easy to understand, but the comments also recommend the more production-friendly design of GCS OBJECT_FINALIZE notifications to Pub/Sub and then triggering the DAG with object metadata. That recommendation aligns with Composer guidance around orchestration patterns and with Google’s alerting/operations guidance that emphasizes scalable production patterns rather than overusing worker-bound polling.
+
+Monitoring and quality
+The SLA section uses Airflow sla_miss_callback and failure callbacks so delayed tasks or failed DAGs can emit structured alert messages, which fits Google’s documented alerting approach for Cloud Composer using callbacks plus Cloud Logging and Cloud Monitoring policies. The data-quality section adds explicit BigQuery checks for nulls, duplicates, and freshness because a DAG can be technically successful while still loading poor-quality data, and BigQuery job operators are the standard way to enforce such SQL-based gates in Airflow.
+
+Commands
+The file also contains practical commands such as importing the DAG into Composer, triggering DAGs, creating GCS-to-Pub/Sub notifications, pulling Pub/Sub messages, reading Composer logs, listing Dataflow jobs, and running a BigQuery duplicate check. Those commands are based on Google Cloud CLI flows documented for Composer and Dataflow setup, including uploading DAGs to the Composer bucket and launching Dataflow pipelines from Airflow.
